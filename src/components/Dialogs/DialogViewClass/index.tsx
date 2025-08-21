@@ -1,187 +1,175 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from "react";
-import { useState } from "react";
-import { styled } from "@mui/material/styles";
-// import { ContextDialogViewClass } from "../../../context/context.ts";
-import { IDialogController } from "../../../interfaces/index.ts";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import CloseIcon from "@mui/icons-material/Close";
-import Dialog from "@mui/material/Dialog";
-import IconButton from "@mui/material/IconButton";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { DivHeader, DivList } from "./style.ts";
-import Typography from "@mui/material/Typography";
+import React, { memo, useCallback, useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from "@mui/material"
+import { styled } from "@mui/material/styles"
+import { Close, Visibility } from "@mui/icons-material"
+import { IDialogController } from "../../../interfaces/index.ts"
+import { DivHeader, DivList } from "./style.ts"
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+// Constantes de estilo
+const FONT_FAMILY = "Poppins, sans-serif"
+const PRIMARY_COLOR = "#323232"
+const SECONDARY_COLOR = "#A7A7A7"
+const WHITE_COLOR = "#FFFFFF"
+
+// Styled component otimizado
+const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
-}));
+}))
 
-const DialogViewClass: React.FC<IDialogController> = ({
-  turma,
-  schoolName,
-  students = [],
-}) => {
-  const [open, setOpen] = useState(false);
+const iconButtonStyles = {
+  "&:focus, &:active, &:hover, &:focus-visible, &:focus-within, &:disabled:hover":
+    {
+      outline: "none",
+      boxShadow: "none",
+    },
+} as const
 
-  // const { openViewClass = false, setOpenViewClass } = useContext(
-  //   ContextDialogViewClass
-  // );
+const dialogPaperStyles = {
+  width: "31.25vw",
+  height: "512px",
+  borderRadius: "12px",
+  display: "flex",
+  flexDirection: "column" as const,
+  padding: "24px",
+  bgcolor: WHITE_COLOR,
+  gap: "40px",
+  overflow: "hidden",
+} as const
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const dialogTitleStyles = {
+  m: 0,
+  w: "100%",
+  p: 0,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+} as const
 
-  return (
-    <>
-      <IconButton
-        onClick={handleClickOpen}
-        sx={{
-          " &:focus": {
-            outline: "none",
-            boxShadow: "none",
-          },
+const classNameStyles = {
+  fontFamily: FONT_FAMILY,
+  fontSize: "1.25rem",
+  fontWeight: 600,
+  lineHeight: "30px",
+  color: PRIMARY_COLOR,
+} as const
 
-          "&:hover": {
-            outline: "none",
-            boxShadow: "none",
-          },
-          "&:active": {
-            outline: "none",
-            boxShadow: "none",
-          },
-          "&:focus-visible": {
-            outline: "none",
-            boxShadow: "none",
-          },
-          "&:focus-within": {
-            outline: "none",
-            boxShadow: "none",
-          },
+const schoolNameStyles = {
+  fontFamily: FONT_FAMILY,
+  fontSize: "1rem",
+  fontWeight: 400,
+  lineHeight: "24px",
+  color: SECONDARY_COLOR,
+} as const
 
-          "&:disabled:hover": {
-            outline: "none",
-            boxShadow: "none",
-          },
-        }}
-      >
-        <VisibilityIcon sx={{ width: 20, height: 20, color: "#1F1F1F" }} />
-      </IconButton>
+const dialogContentStyles = {
+  display: "flex",
+  flexDirection: "column" as const,
+  "&.MuiDialogContent-root": {
+    padding: 0,
+  },
+} as const
 
-      <BootstrapDialog
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        PaperProps={{
-          sx: {
-            width: "31.25vw",
-            height: "512px",
-            borderRadius: "12px",
-            display: "flex",
-            flexDirection: "column",
-            padding: "24px",
-            bgcolor: "#FFFFFF",
-            gap: "40px",
-            overflow: "hidden",
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            m: 0,
-            w: "100%",
-            p: 0,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "start",
-          }}
+const studentItemStyles = {
+  height: "60px",
+  fontFamily: FONT_FAMILY,
+  fontSize: "0.87rem",
+  fontWeight: 500,
+  color: PRIMARY_COLOR,
+  borderBottom: "0.75px solid #E2E8F0",
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "center",
+} as const
+
+interface Student {
+  name: string
+  [key: string]: any
+}
+
+const DialogViewClass: React.FC<IDialogController> = memo(
+  ({ turma, schoolName, students = [] }) => {
+    const [open, setOpen] = useState(false)
+
+    const handleClickOpen = useCallback(() => {
+      setOpen(true)
+    }, [])
+
+    const handleClose = useCallback(() => {
+      setOpen(false)
+    }, [])
+
+    const typedStudents = students as Student[]
+    const hasStudents = typedStudents && typedStudents.length > 0
+
+    return (
+      <>
+        <IconButton onClick={handleClickOpen} sx={iconButtonStyles}>
+          <Visibility sx={{ width: 20, height: 20, color: PRIMARY_COLOR }} />
+        </IconButton>
+
+        <StyledDialog
+          aria-labelledby="view-class-dialog-title"
+          open={open}
+          onClose={handleClose}
+          PaperProps={{ sx: dialogPaperStyles }}
         >
-          <DivHeader>
-            <Typography
-              sx={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "1.25rem",
-                fontWeight: 600,
-                lineHeight: "30px",
-                color: "#323232",
-              }}
-            >
-              {turma}
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Poppins, sans-serif",
-                fontSize: "1rem",
-                fontWeight: 400,
-                lineHeight: "24px",
-                color: "#A7A7A7",
-              }}
-            >
-              {schoolName}
-            </Typography>
-          </DivHeader>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              "&:focus": {
-                outline: "none",
-                boxShadow: "none",
-              },
-              "&:active": {
-                outline: "none",
-                boxShadow: "none",
-              },
-            }}
-          >
-            <CloseIcon
-              sx={{
-                color: "#323232",
-              }}
-            />
-          </IconButton>
-        </DialogTitle>
+          <DialogTitle id="view-class-dialog-title" sx={dialogTitleStyles}>
+            <DivHeader>
+              <Typography sx={classNameStyles}>{turma}</Typography>
+              <Typography sx={schoolNameStyles}>{schoolName}</Typography>
+            </DivHeader>
 
-        <>
-          <DivList>
-            <DialogContent
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                "&.MuiDialogContent-root": {
-                  padding: 0,
-                },
-              }}
+            <IconButton
+              aria-label="Fechar diálogo"
+              onClick={handleClose}
+              sx={iconButtonStyles}
             >
-              {students &&
-                students.length > 0 &&
-                students.map((student, index) => (
+              <Close sx={{ color: PRIMARY_COLOR }} />
+            </IconButton>
+          </DialogTitle>
+
+          <DivList>
+            <DialogContent sx={dialogContentStyles}>
+              {hasStudents ? (
+                typedStudents.map((student, index) => (
                   <Typography
-                    key={index}
-                    sx={{
-                      height: "60px",
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "0.87rem",
-                      fontWeight: 500,
-                      color: "#323232",
-                      borderBottom: "0.75px solid #E2E8F0",
-                      display: "flex",
-                      justifyContent: "start",
-                      alignItems: "center",
-                    }}
+                    key={`student-${index}-${student.name}`}
+                    sx={studentItemStyles}
                   >
-                    {student?.name}
+                    {student.name}
                   </Typography>
-                ))}
+                ))
+              ) : (
+                <Typography
+                  sx={{
+                    ...studentItemStyles,
+                    justifyContent: "center",
+                    color: SECONDARY_COLOR,
+                    borderBottom: "none",
+                  }}
+                >
+                  Nenhum aluno encontrado
+                </Typography>
+              )}
             </DialogContent>
           </DivList>
-        </>
-      </BootstrapDialog>
-    </>
-  );
-};
+        </StyledDialog>
+      </>
+    )
+  }
+)
 
-export default DialogViewClass;
+DialogViewClass.displayName = "DialogViewClass"
+
+export default DialogViewClass

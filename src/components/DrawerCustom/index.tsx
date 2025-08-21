@@ -1,22 +1,22 @@
-import * as React from "react";
+import * as React from "react"
 
-import { IDrawerController } from "../../interfaces";
-import Drawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
-import { Main, DivHeader, Title, BoxDrops } from "./style.ts";
-import IconeFIlter from "../../assets/IconFIlter/Vector.svg";
-import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
-import SelectCustom from "../SelectCustom/index.tsx";
-import Button from "@mui/material/Button";
-import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import { IDrawerController } from "../../interfaces"
+import Drawer from "@mui/material/Drawer"
+import Box from "@mui/material/Box"
+import { Main, DivHeader, Title, BoxDrops } from "./style.ts"
+import IconeFIlter from "../../assets/IconFIlter/Vector.svg"
+import CloseIcon from "@mui/icons-material/Close"
+import IconButton from "@mui/material/IconButton"
+import SelectCustom from "../SelectCustom/index.tsx"
+import Button from "@mui/material/Button"
+import SearchIcon from "@mui/icons-material/Search"
+import { useState } from "react"
+import { useTheme } from "@mui/material/styles"
 
 // Adiciona uma propriedade opcional para expor os filtros selecionados para o componente pai
 interface DrawerCustomProps extends IDrawerController {
-  onFiltersChange?: (filters: Record<number, string | null>) => void;
-  onSearch?: (filters: {[key: string]: number}) => void; // NOVA PROP
+  onFiltersChange?: (filters: Record<number, string | null>) => void
+  onSearch?: (filters: { [key: string]: number }) => void // NOVA PROP
 }
 
 const DrawerCustom: React.FC<DrawerCustomProps> = ({
@@ -28,34 +28,36 @@ const DrawerCustom: React.FC<DrawerCustomProps> = ({
 }) => {
   // Estado para armazenar os valores selecionados de cada SelectCustom
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedFilters, setSelectedFilters] = useState<Record<number, string | null>>({});
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<number, string | null>
+  >({})
 
   const handleSelectChange = (index: number, value: string | null) => {
     setSelectedFilters((prev) => {
       // Se o valor para esse índice não mudou, retorna o estado anterior
       if (prev[index] === value) {
-        return prev;
+        return prev
       }
-      const updated = { ...prev, [index]: value };
-      onFiltersChange?.(updated);
-      return updated;
-    });
-  };
+      const updated = { ...prev, [index]: value }
+      onFiltersChange?.(updated)
+      return updated
+    })
+  }
 
   const closeDrawer = () => () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
-  const [resetFilters, setResetFilters] = useState(false);
+  const [resetFilters, setResetFilters] = useState(false)
 
   const handleClearFilters = () => {
-    setResetFilters((prev) => !prev); // Alterna o estado para forçar o reset
-    setSelectedFilters({}); // Limpa os filtros selecionados
-    onFiltersChange?.({}); // Expondo os filtros limpos para o pai, se necessário
-    setTimeout(() => setResetFilters(false), 500);
-  };
+    setResetFilters((prev) => !prev) // Alterna o estado para forçar o reset
+    setSelectedFilters({}) // Limpa os filtros selecionados
+    onFiltersChange?.({}) // Expondo os filtros limpos para o pai, se necessário
+    setTimeout(() => setResetFilters(false), 500)
+  }
 
-  const theme = useTheme();
+  const theme = useTheme()
 
   return (
     <Drawer
@@ -233,14 +235,14 @@ const DrawerCustom: React.FC<DrawerCustomProps> = ({
               />
             }
             onClick={() => {
-              const filters: { [key: string]: number } = {};
+              const filters: { [key: string]: number } = {}
               Object.entries(selectedFilters).forEach(([key, value]) => {
                 if (value !== null && !isNaN(Number(value))) {
-                  filters[key] = Number(value);
+                  filters[key] = Number(value)
                 }
-              });
-              onSearch?.(filters);
-              closeDrawer()();
+              })
+              onSearch?.(filters)
+              closeDrawer()()
             }}
           >
             Pesquisar
@@ -248,7 +250,7 @@ const DrawerCustom: React.FC<DrawerCustomProps> = ({
         </Box>
       </Main>
     </Drawer>
-  );
-};
+  )
+}
 
-export default DrawerCustom;
+export default DrawerCustom

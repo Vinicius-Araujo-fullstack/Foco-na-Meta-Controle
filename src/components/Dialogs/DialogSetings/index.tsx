@@ -1,272 +1,208 @@
-// ------------- REVISADO -------------
+import React, { memo, useCallback, useState } from "react"
+import { Button, IconButton, Popover } from "@mui/material"
+import {
+  Delete,
+  Edit,
+  FileDownloadOff,
+  FileUpload,
+  MoreVert,
+} from "@mui/icons-material"
+import { IDialogController } from "../../../interfaces/index.ts"
+import DialogDeleteConfirm from "../DialogsDeletConfirm/index.tsx"
 
-import * as React from "react";
-import { IDialogController } from "../../../interfaces/index.ts";
-import Popover from "@mui/material/Popover";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FileDownloadOffIcon from "@mui/icons-material/FileDownloadOff";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import DialogDeleteConfirm from "../DialogsDeletConfirm/index.tsx";
+// Constantes de estilo
+const FONT_FAMILY = "Poppins, sans-serif"
+const PRIMARY_COLOR = "#1F1F1F"
+const HOVER_COLOR = "#F5F5F5"
 
-const DialogSetings: React.FC<IDialogController> = ({
-  buttonPublish = true,
-  buttonRemovePost = true,
-  buttonDelete = true,
-  buttonEdit = true,
-  refInfo,
-  setInternalPageControl,
-  setFunction,
-  textModal,
-  funcConfirmDelete,
-  openDelet,
-  setOpenDelet,
-  isLoading,
-}) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+const iconButtonStyles = {
+  "&:focus, &:active": {
+    outline: "none",
+    boxShadow: "none",
+  },
+} as const
 
-  console.log(openDelet)
-  const handleEditClick = () => {
-    setInternalPageControl?.("editar");
-    setFunction?.(refInfo ?? null);
-    setAnchorEl(null);
-  };
-  const handleDeletClick = () => {
-    funcConfirmDelete();
-    setTimeout(() => {
-      setOpenDelet(false)
-      setAnchorEl(null);
-    }, 500);
-  };
+const popoverPaperStyles = {
+  display: "flex",
+  flexDirection: "column" as const,
+  padding: "4px",
+  borderRadius: "8px",
+  marginTop: "-33px",
+} as const
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+const baseButtonStyles = {
+  background: "transparent",
+  textTransform: "none" as const,
+  color: PRIMARY_COLOR,
+  fontSize: "1rem",
+  fontFamily: FONT_FAMILY,
+  padding: "4px 16px",
+  height: "36px",
+  boxShadow: "none",
+  display: "flex",
+  justifyContent: "flex-start",
+  gap: "4px",
+  "&:hover": {
+    outline: "none",
+    boxShadow: "none",
+    background: HOVER_COLOR,
+  },
+  "&:active": {
+    outline: "none",
+    boxShadow: "none",
+  },
+} as const
 
-  const handleClose = () => {
-    if (!isLoading) setAnchorEl(null);
-  };
+const wideButtonStyles = {
+  ...baseButtonStyles,
+  width: "156px",
+} as const
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+interface PopoverAction {
+  id: string
+  label: string
+  icon: React.ReactNode
+  onClick?: () => void
+  show: boolean
+  width?: string
+}
 
-  return (
-    <>
-      <IconButton
-        onClick={handleClick}
-        sx={{
-          " &:focus": {
-            outline: "none",
-            boxShadow: "none",
-          },
+const DialogSettings: React.FC<IDialogController> = memo(
+  ({
+    buttonPublish = true,
+    buttonRemovePost = true,
+    buttonDelete = true,
+    buttonEdit = true,
+    refInfo,
+    setInternalPageControl,
+    setFunction,
+    textModal,
+    funcConfirmDelete,
+    openDelet,
+    setOpenDelet,
+    isLoading,
+  }) => {
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+    const open = Boolean(anchorEl)
 
-          "&:active": {
-            outline: "none",
-            boxShadow: "none",
-          },
-        }}
-      >
-        <MoreVertIcon />
-      </IconButton>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        slotProps={{
-          paper: {
-            sx: {
-              display: "flex",
-              flexDirection: "column",
-              padding: "4px",
-              borderRadius: "8px",
-              marginTop: "-33px",
-            },
-          },
-        }}
-      >
-        {/* botão de remover publicação */}
-        {buttonRemovePost == true ? (
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<FileDownloadOffIcon sx={{ transform: "rotate(180deg)" }} />}
-            disableRipple
-            disableElevation
-            sx={{
-              background: "transparent",
-              textTransform: "none",
-              color: "#1F1F1F",
-              fontSize: "1rem",
-              fontFamily: "Poppins, sans-serif",
-              padding: "4px 16px",
+    const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget)
+    }, [])
 
-              height: "36px",
-              boxShadow: "none",
-              display: "flex",
-              justifyContent: "start",
-              gap: "4px",
+    const handleClose = useCallback(() => {
+      if (!isLoading) {
+        setAnchorEl(null)
+      }
+    }, [isLoading])
 
-              "&:hover": {
-                outline: "none",
-                boxShadow: "none",
-              },
-              "&:active": {
-                outline: "none",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Remover publicação
-          </Button>
-        ) : null}
+    const handleEditClick = useCallback(() => {
+      setInternalPageControl?.("editar")
+      setFunction?.(refInfo ?? null)
+      setAnchorEl(null)
+    }, [setInternalPageControl, setFunction, refInfo])
 
-        {/* botão de Publicar */}
-        {buttonPublish == true ? (
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<FileUploadIcon />}
-            disableRipple
-            disableElevation
-            sx={{
-              background: "transparent",
-              textTransform: "none",
-              color: "#1F1F1F",
-              fontSize: "1rem",
-              fontFamily: "Poppins, sans-serif",
-              padding: "4px 16px",
+    const handleDeleteClick = useCallback(() => {
+      funcConfirmDelete?.()
+      setTimeout(() => {
+        setOpenDelet?.(false)
+        setAnchorEl(null)
+      }, 500)
+    }, [funcConfirmDelete, setOpenDelet])
 
-              height: "36px",
-              boxShadow: "none",
-              display: "flex",
-              justifyContent: "start",
-              gap: "4px",
+    const handleOpenDeleteDialog = useCallback(() => {
+      setOpenDelet?.(true)
+    }, [setOpenDelet])
 
-              "&:hover": {
-                outline: "none",
-                boxShadow: "none",
-              },
-              "&:active": {
-                outline: "none",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Publicar
-          </Button>
-        ) : null}
+    const handleCloseDeleteDialog = useCallback(() => {
+      setOpenDelet?.(false)
+    }, [setOpenDelet])
 
-        {/* botão de Editar */}
-        {buttonEdit == true ? (
-          <Button
-            onClick={handleEditClick}
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<EditIcon />}
-            disableRipple
-            disableElevation
-            sx={{
-              background: "transparent",
-              textTransform: "none",
-              color: "#1F1F1F",
-              fontSize: "1rem",
-              fontFamily: "Poppins, sans-serif",
-              padding: "4px 16px",
-              width: "156px",
-              height: "36px",
-              boxShadow: "none",
-              display: "flex",
-              justifyContent: "start",
-              gap: "4px",
+    // Configuração das ações do popover
+    const actions: PopoverAction[] = [
+      {
+        id: "remove-post",
+        label: "Remover publicação",
+        icon: <FileDownloadOff sx={{ transform: "rotate(180deg)" }} />,
+        show: buttonRemovePost,
+      },
+      {
+        id: "publish",
+        label: "Publicar",
+        icon: <FileUpload />,
+        show: buttonPublish,
+      },
+      {
+        id: "edit",
+        label: "Editar",
+        icon: <Edit />,
+        onClick: handleEditClick,
+        show: buttonEdit,
+        width: "156px",
+      },
+      {
+        id: "delete",
+        label: "Excluir",
+        icon: <Delete />,
+        onClick: handleOpenDeleteDialog,
+        show: buttonDelete,
+        width: "156px",
+      },
+    ]
 
-              "&:hover": {
-                outline: "none",
-                boxShadow: "none",
-                background: "#F5F5F5",
-              },
-              "&:active": {
-                outline: "none",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Editar
-          </Button>
-        ) : null}
+    const visibleActions = actions.filter((action) => action.show)
 
-        {/* botão de Deletar */}
-        {buttonDelete == true ? (
-          <Button
-            onClick={() => {
-              setOpenDelet(true);
-            }}
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            startIcon={<DeleteIcon />}
-            disableRipple
-            disableElevation
-            sx={{
-              background: "transparent",
-              textTransform: "none",
-              color: "#1F1F1F",
-              fontSize: "1rem",
-              fontFamily: "Poppins, sans-serif",
-              padding: "4px 16px",
-              width: "156px",
-              height: "36px",
-              boxShadow: "none",
-              display: "flex",
-              justifyContent: "start",
-              gap: "4px",
+    return (
+      <>
+        <IconButton onClick={handleClick} sx={iconButtonStyles}>
+          <MoreVert />
+        </IconButton>
 
-              "&:hover": {
-                outline: "none",
-                boxShadow: "none",
-                background: "#F5F5F5",
-              },
-              "&:active": {
-                outline: "none",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Excluir
-          </Button>
-        ) : null}
-        <DialogDeleteConfirm
-          open={openDelet}
-          isLoading={isLoading}
-          onClose={() => setOpenDelet(false)}
-          onConfirm={() => {
-            handleDeletClick();
-            // setOpenDelet(false);
-            // isLoading ?setAnchorEl(null);
+        <Popover
+          id={open ? "settings-popover" : undefined}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
           }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          slotProps={{
+            paper: { sx: popoverPaperStyles },
+          }}
+        >
+          {visibleActions.map((action) => (
+            <Button
+              key={action.id}
+              onClick={action.onClick}
+              component="label"
+              variant="contained"
+              tabIndex={-1}
+              startIcon={action.icon}
+              disableRipple
+              disableElevation
+              sx={action.width ? wideButtonStyles : baseButtonStyles}
+            >
+              {action.label}
+            </Button>
+          ))}
+        </Popover>
+
+        <DialogDeleteConfirm
+          open={openDelet || false}
+          isLoading={isLoading || false}
+          onClose={handleCloseDeleteDialog}
+          onConfirm={handleDeleteClick}
           texto={textModal}
         />
-      </Popover>
-    </>
-  );
-};
+      </>
+    )
+  }
+)
 
-export default DialogSetings;
+DialogSettings.displayName = "DialogSettings"
+
+export default DialogSettings

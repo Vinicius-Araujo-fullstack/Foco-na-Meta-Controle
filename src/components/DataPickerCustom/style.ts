@@ -1,30 +1,30 @@
-import styled from "styled-components";
+import styled from "styled-components"
+
+// Constantes para reutilização
+const FONT_FAMILY = "Poppins, sans-serif"
+const BORDER_RADIUS = "12px"
+const TEXT_COLOR = "#8C8C8C"
+const BACKGROUND_COLOR = "#FFFFFF"
 
 export const SortByDate = styled.div`
-  font-size: 0.9rem;
-  color: #555;
-  background: #FFFFFF;
-  height: 50px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
-  font-family: Poppins, sans-serif;
-  font-weight: 400;
+  height: 50px;
+  padding: 0 16px;
+  font-family: ${FONT_FAMILY};
   font-size: 1rem;
-  color: #8C8C8C;
+  font-weight: 400;
+  color: ${TEXT_COLOR};
+  background: ${BACKGROUND_COLOR};
+  border-radius: ${BORDER_RADIUS};
   cursor: pointer;
-  padding: 0px 16px 0px 16px;
-  
-  
-`;
-export const ContentSortByDate = styled.div`
- display:flex;
+`
 
- align-items: start;
+export const ContentSortByDate = styled.div`
+  display: flex;
+  align-items: flex-start;
   gap: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  
-  
-`;
+`
