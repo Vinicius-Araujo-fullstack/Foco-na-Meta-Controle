@@ -162,7 +162,7 @@ const CardArticle: React.FC<CardArticleProps> = memo(
     ]
 
     // Renderização do botão de menu
-    const renderMenuButton = (showInHeader: boolean) => (
+    const renderMenuButton = () => (
       <IconButton
         aria-label="opções do artigo"
         aria-controls={isMenuOpen ? "article-menu" : undefined}
@@ -224,14 +224,14 @@ const CardArticle: React.FC<CardArticleProps> = memo(
         {type && (
           <Flex>
             <TextLegend type={type}>{type}</TextLegend>
-            {renderMenuButton(true)}
+            {renderMenuButton()}
           </Flex>
         )}
 
         {/* Título com menu (quando não há tipo) */}
         <Flex>
           <TitleArticle>{dataList.title}</TitleArticle>
-          {!type && renderMenuButton(false)}
+          {!type && renderMenuButton()}
         </Flex>
 
         {/* Conteúdo do artigo */}
